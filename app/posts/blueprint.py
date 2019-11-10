@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import render_template
+from flask import request
 from models import Post, Tag
 
 
@@ -8,7 +9,10 @@ posts = Blueprint('posts', __name__, template_folder='templates')
 
 @posts.route('/')
 def index():
+    q = request.args.get('q')
     posts = Post.query.all()
+    if q:
+        posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q))
     return render_template('posts/index.html', posts=posts)
 
 
